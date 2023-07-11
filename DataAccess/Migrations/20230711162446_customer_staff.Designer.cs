@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(CarRentalDbContext))]
-    [Migration("20230710173335_initial")]
-    partial class initial
+    [Migration("20230711162446_customer_staff")]
+    partial class customer_staff
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace DataAccess.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Entities.Billing", b =>
+            modelBuilder.Entity("Entities.Concrete.Billing", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -42,11 +42,11 @@ namespace DataAccess.Migrations
                     b.Property<int>("PaymentId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("TotalFee")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("TotalFee")
+                        .HasColumnType("float");
 
-                    b.Property<decimal>("TotalLateFee")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("TotalLateFee")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
@@ -58,7 +58,7 @@ namespace DataAccess.Migrations
                     b.ToTable("Billings");
                 });
 
-            modelBuilder.Entity("Entities.Booking", b =>
+            modelBuilder.Entity("Entities.Concrete.Booking", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -95,14 +95,16 @@ namespace DataAccess.Migrations
                     b.HasIndex("CustomerId")
                         .IsUnique();
 
-                    b.HasIndex("DropOffLocId");
+                    b.HasIndex("DropOffLocId")
+                        .IsUnique();
 
-                    b.HasIndex("PickUpLocId");
+                    b.HasIndex("PickUpLocId")
+                        .IsUnique();
 
                     b.ToTable("Bookings");
                 });
 
-            modelBuilder.Entity("Entities.Car", b =>
+            modelBuilder.Entity("Entities.Concrete.Car", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -113,11 +115,14 @@ namespace DataAccess.Migrations
                     b.Property<int>("CarModelId")
                         .HasColumnType("int");
 
-                    b.Property<long>("CustomerId")
-                        .HasColumnType("bigint");
+                    b.Property<double>("CostPerDay")
+                        .HasColumnType("float");
 
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("bit");
+
+                    b.Property<double>("LateFeePerHour")
+                        .HasColumnType("float");
 
                     b.Property<int>("LocationId")
                         .HasColumnType("int");
@@ -135,19 +140,19 @@ namespace DataAccess.Migrations
                     b.Property<int>("Rating")
                         .HasColumnType("int");
 
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CarModelId");
-
-                    b.HasIndex("CustomerId")
-                        .IsUnique();
 
                     b.HasIndex("LocationId");
 
                     b.ToTable("Cars");
                 });
 
-            modelBuilder.Entity("Entities.CarModel", b =>
+            modelBuilder.Entity("Entities.Concrete.CarModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -159,12 +164,6 @@ namespace DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("CostPerDay")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("LateFeePerHour")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<string>("Maker")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -173,15 +172,12 @@ namespace DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Year")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.ToTable("CarModels");
                 });
 
-            modelBuilder.Entity("Entities.Customer", b =>
+            modelBuilder.Entity("Entities.Concrete.Customer", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -235,10 +231,10 @@ namespace DataAccess.Migrations
 
                     b.HasIndex("StaffId");
 
-                    b.ToTable("Customer");
+                    b.ToTable("Customers");
                 });
 
-            modelBuilder.Entity("Entities.CustomerType", b =>
+            modelBuilder.Entity("Entities.Concrete.CustomerType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -246,8 +242,8 @@ namespace DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal>("DiscountRate")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("DiscountRate")
+                        .HasColumnType("float");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -258,7 +254,7 @@ namespace DataAccess.Migrations
                     b.ToTable("CustomerTypes");
                 });
 
-            modelBuilder.Entity("Entities.Location", b =>
+            modelBuilder.Entity("Entities.Concrete.Location", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -279,7 +275,7 @@ namespace DataAccess.Migrations
                     b.ToTable("Locations");
                 });
 
-            modelBuilder.Entity("Entities.Payment", b =>
+            modelBuilder.Entity("Entities.Concrete.Payment", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -296,7 +292,7 @@ namespace DataAccess.Migrations
                     b.ToTable("Payments");
                 });
 
-            modelBuilder.Entity("Entities.Staff", b =>
+            modelBuilder.Entity("Entities.Concrete.Staff", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -333,15 +329,15 @@ namespace DataAccess.Migrations
                     b.ToTable("Staffs");
                 });
 
-            modelBuilder.Entity("Entities.Billing", b =>
+            modelBuilder.Entity("Entities.Concrete.Billing", b =>
                 {
-                    b.HasOne("Entities.Booking", "Booking")
+                    b.HasOne("Entities.Concrete.Booking", "Booking")
                         .WithOne("Billing")
-                        .HasForeignKey("Entities.Billing", "BookingId")
+                        .HasForeignKey("Entities.Concrete.Billing", "BookingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Entities.Payment", "Payment")
+                    b.HasOne("Entities.Concrete.Payment", "Payment")
                         .WithMany("Billings")
                         .HasForeignKey("PaymentId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -352,30 +348,30 @@ namespace DataAccess.Migrations
                     b.Navigation("Payment");
                 });
 
-            modelBuilder.Entity("Entities.Booking", b =>
+            modelBuilder.Entity("Entities.Concrete.Booking", b =>
                 {
-                    b.HasOne("Entities.Car", "Car")
+                    b.HasOne("Entities.Concrete.Car", "Car")
                         .WithOne("Booking")
-                        .HasForeignKey("Entities.Booking", "CarId")
+                        .HasForeignKey("Entities.Concrete.Booking", "CarId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Entities.Customer", "Customer")
+                    b.HasOne("Entities.Concrete.Customer", "Customer")
                         .WithOne("Booking")
-                        .HasForeignKey("Entities.Booking", "CustomerId")
+                        .HasForeignKey("Entities.Concrete.Booking", "CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Entities.Location", "DropOffLoc")
-                        .WithMany("DropOffBookings")
-                        .HasForeignKey("DropOffLocId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("Entities.Concrete.Location", "DropOffLoc")
+                        .WithOne("DropOffBooking")
+                        .HasForeignKey("Entities.Concrete.Booking", "DropOffLocId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Entities.Location", "PickUpLoc")
-                        .WithMany("PickUpBookings")
-                        .HasForeignKey("PickUpLocId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("Entities.Concrete.Location", "PickUpLoc")
+                        .WithOne("PickUpBooking")
+                        .HasForeignKey("Entities.Concrete.Booking", "PickUpLocId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Car");
@@ -387,21 +383,15 @@ namespace DataAccess.Migrations
                     b.Navigation("PickUpLoc");
                 });
 
-            modelBuilder.Entity("Entities.Car", b =>
+            modelBuilder.Entity("Entities.Concrete.Car", b =>
                 {
-                    b.HasOne("Entities.CarModel", "CarModel")
+                    b.HasOne("Entities.Concrete.CarModel", "CarModel")
                         .WithMany("Cars")
                         .HasForeignKey("CarModelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Entities.Customer", "Customer")
-                        .WithOne("Car")
-                        .HasForeignKey("Entities.Car", "CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Entities.Location", "Location")
+                    b.HasOne("Entities.Concrete.Location", "Location")
                         .WithMany("Cars")
                         .HasForeignKey("LocationId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -409,20 +399,18 @@ namespace DataAccess.Migrations
 
                     b.Navigation("CarModel");
 
-                    b.Navigation("Customer");
-
                     b.Navigation("Location");
                 });
 
-            modelBuilder.Entity("Entities.Customer", b =>
+            modelBuilder.Entity("Entities.Concrete.Customer", b =>
                 {
-                    b.HasOne("Entities.CustomerType", "CustomerType")
+                    b.HasOne("Entities.Concrete.CustomerType", "CustomerType")
                         .WithMany("Customers")
                         .HasForeignKey("CustomerTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Entities.Staff", "Staff")
+                    b.HasOne("Entities.Concrete.Staff", "Staff")
                         .WithMany("Customers")
                         .HasForeignKey("StaffId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -433,52 +421,51 @@ namespace DataAccess.Migrations
                     b.Navigation("Staff");
                 });
 
-            modelBuilder.Entity("Entities.Booking", b =>
+            modelBuilder.Entity("Entities.Concrete.Booking", b =>
                 {
                     b.Navigation("Billing")
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Entities.Car", b =>
+            modelBuilder.Entity("Entities.Concrete.Car", b =>
                 {
                     b.Navigation("Booking")
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Entities.CarModel", b =>
+            modelBuilder.Entity("Entities.Concrete.CarModel", b =>
                 {
                     b.Navigation("Cars");
                 });
 
-            modelBuilder.Entity("Entities.Customer", b =>
+            modelBuilder.Entity("Entities.Concrete.Customer", b =>
                 {
                     b.Navigation("Booking")
                         .IsRequired();
-
-                    b.Navigation("Car")
-                        .IsRequired();
                 });
 
-            modelBuilder.Entity("Entities.CustomerType", b =>
+            modelBuilder.Entity("Entities.Concrete.CustomerType", b =>
                 {
                     b.Navigation("Customers");
                 });
 
-            modelBuilder.Entity("Entities.Location", b =>
+            modelBuilder.Entity("Entities.Concrete.Location", b =>
                 {
                     b.Navigation("Cars");
 
-                    b.Navigation("DropOffBookings");
+                    b.Navigation("DropOffBooking")
+                        .IsRequired();
 
-                    b.Navigation("PickUpBookings");
+                    b.Navigation("PickUpBooking")
+                        .IsRequired();
                 });
 
-            modelBuilder.Entity("Entities.Payment", b =>
+            modelBuilder.Entity("Entities.Concrete.Payment", b =>
                 {
                     b.Navigation("Billings");
                 });
 
-            modelBuilder.Entity("Entities.Staff", b =>
+            modelBuilder.Entity("Entities.Concrete.Staff", b =>
                 {
                     b.Navigation("Customers");
                 });

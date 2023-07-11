@@ -4,6 +4,7 @@ using DataAccess.Concrete.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(CarRentalDbContext))]
-    partial class CarRentalDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230711162342_billing_payment")]
+    partial class billing_payment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -219,14 +222,9 @@ namespace DataAccess.Migrations
                     b.Property<long>("Phone")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("StaffId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerTypeId");
-
-                    b.HasIndex("StaffId");
 
                     b.ToTable("Customers");
                 });
@@ -287,43 +285,6 @@ namespace DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Payments");
-                });
-
-            modelBuilder.Entity("Entities.Concrete.Staff", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MiddleName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Staffs");
                 });
 
             modelBuilder.Entity("Entities.Concrete.Billing", b =>
@@ -407,15 +368,7 @@ namespace DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Entities.Concrete.Staff", "Staff")
-                        .WithMany("Customers")
-                        .HasForeignKey("StaffId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("CustomerType");
-
-                    b.Navigation("Staff");
                 });
 
             modelBuilder.Entity("Entities.Concrete.Booking", b =>
@@ -460,11 +413,6 @@ namespace DataAccess.Migrations
             modelBuilder.Entity("Entities.Concrete.Payment", b =>
                 {
                     b.Navigation("Billings");
-                });
-
-            modelBuilder.Entity("Entities.Concrete.Staff", b =>
-                {
-                    b.Navigation("Customers");
                 });
 #pragma warning restore 612, 618
         }

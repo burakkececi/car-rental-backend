@@ -4,6 +4,7 @@ using DataAccess.Concrete.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(CarRentalDbContext))]
-    partial class CarRentalDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230711162127_location_booking")]
+    partial class location_booking
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,39 +24,6 @@ namespace DataAccess.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("Entities.Concrete.Billing", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("BookingId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("PaymentId")
-                        .HasColumnType("int");
-
-                    b.Property<double>("TotalFee")
-                        .HasColumnType("float");
-
-                    b.Property<double>("TotalLateFee")
-                        .HasColumnType("float");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BookingId")
-                        .IsUnique();
-
-                    b.HasIndex("PaymentId");
-
-                    b.ToTable("Billings");
-                });
 
             modelBuilder.Entity("Entities.Concrete.Booking", b =>
                 {
@@ -219,14 +189,9 @@ namespace DataAccess.Migrations
                     b.Property<long>("Phone")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("StaffId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerTypeId");
-
-                    b.HasIndex("StaffId");
 
                     b.ToTable("Customers");
                 });
@@ -270,79 +235,6 @@ namespace DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Locations");
-                });
-
-            modelBuilder.Entity("Entities.Concrete.Payment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Payments");
-                });
-
-            modelBuilder.Entity("Entities.Concrete.Staff", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MiddleName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Staffs");
-                });
-
-            modelBuilder.Entity("Entities.Concrete.Billing", b =>
-                {
-                    b.HasOne("Entities.Concrete.Booking", "Booking")
-                        .WithOne("Billing")
-                        .HasForeignKey("Entities.Concrete.Billing", "BookingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Entities.Concrete.Payment", "Payment")
-                        .WithMany("Billings")
-                        .HasForeignKey("PaymentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Booking");
-
-                    b.Navigation("Payment");
                 });
 
             modelBuilder.Entity("Entities.Concrete.Booking", b =>
@@ -407,21 +299,7 @@ namespace DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Entities.Concrete.Staff", "Staff")
-                        .WithMany("Customers")
-                        .HasForeignKey("StaffId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("CustomerType");
-
-                    b.Navigation("Staff");
-                });
-
-            modelBuilder.Entity("Entities.Concrete.Booking", b =>
-                {
-                    b.Navigation("Billing")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Entities.Concrete.Car", b =>
@@ -455,16 +333,6 @@ namespace DataAccess.Migrations
 
                     b.Navigation("PickUpBooking")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Entities.Concrete.Payment", b =>
-                {
-                    b.Navigation("Billings");
-                });
-
-            modelBuilder.Entity("Entities.Concrete.Staff", b =>
-                {
-                    b.Navigation("Customers");
                 });
 #pragma warning restore 612, 618
         }

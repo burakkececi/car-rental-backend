@@ -4,7 +4,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Entities;
+using Entities.Concrete;
 using Microsoft.EntityFrameworkCore;
 
 namespace DataAccess.Concrete.EntityFramework
@@ -15,11 +15,11 @@ namespace DataAccess.Concrete.EntityFramework
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<Car> Cars { get; set; }
         public DbSet<CarModel> CarModels { get; set; }
-        public DbSet<Customer> Customer { get; set; }
+        public DbSet<Customer> Customers { get; set; }
         public DbSet<CustomerType> CustomerTypes { get; set; }
         public DbSet<Location> Locations { get; set; }
         public DbSet<Payment> Payments { get; set; }
-        public DbSet<Staff> Staffs { get; set;}
+        public DbSet<Staff> Staffs { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -28,29 +28,19 @@ namespace DataAccess.Concrete.EntityFramework
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-           
+
             modelBuilder.Entity<Booking>()
             .HasOne(b => b.DropOffLoc)
-            .WithMany(l => l.DropOffBookings)
-            .HasForeignKey(b => b.DropOffLocId);
+            .WithOne(c => c.DropOffBooking)
+            .HasForeignKey<Booking>(b => b.DropOffLocId)
+            .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Booking>()
-                .HasOne(b => b.PickUpLoc)
-                .WithMany(l => l.PickUpBookings)
-                .HasForeignKey(b => b.PickUpLocId);
+            .HasOne(b => b.PickUpLoc)
+            .WithOne(c => c.PickUpBooking)
+            .HasForeignKey<Booking>(b => b.PickUpLocId)
+            .OnDelete(DeleteBehavior.Restrict);
 
-            //modelBuilder.Entity<Customer>()
-            //    .HasKey(c => c.Id);
-
-            //modelBuilder.Entity<Booking>()
-            //    .HasOne(b => b.Customer)
-            //    .WithOne(l => l.Booking)
-            //    .HasForeignKey<Customer>(b => b.Id);
-
-            //modelBuilder.Entity<Car>()
-            //    .HasOne(b => b.Customer)
-            //    .WithOne(l => l.Car)
-            //    .HasForeignKey<Customer>(b => b.Id);
         }
     }
 }

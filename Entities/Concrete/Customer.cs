@@ -11,6 +11,7 @@ namespace Entities.Concrete
     {
         public long Id { get; set; }
         public int CustomerTypeId { get; set; }
+        public int StaffId { get; set; }
         public string FirstName { get; set; }
         public string MiddleName { get; set; } = string.Empty;
         public string LastName { get; set; }
